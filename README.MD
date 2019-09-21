@@ -2,7 +2,7 @@
 Some functions for stock technical analysis. 
 
 ## Usage
-To get RSI for series of prices, use the getRSI method.
+To get RSI for series of prices, use the getRSI method. For demonstration purposes, we use 3 days for the averages.
 ```javascript
 var {getRSI} = require('./technical-analysis');
 var data = {
@@ -14,7 +14,7 @@ var data = {
     '2016-12-29': 111.51058873753,
     '2016-12-30': 110.58133383139
 };
-var rsi = getRSI(d, 3); 
+var rsi = getRSI(data, 3); 
 ```
 rsi will have value of the following.
 ```javascript
