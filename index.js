@@ -75,4 +75,38 @@ function bollingerBand(data, days, n) {
     return bb;
 }
 
-module.exports = {sum, variance, simpleMovingAverage, bollingerBand};
+/**
+ * Calculate RSI from price data
+ * 
+ * @param {Object.<string, number>} data Price data of stock for each trading day
+ * @param {number} n Number of days for the averages
+ * 
+ * @return {Object.<string, number>} Collection of RSI values corresponding to each trading day
+ */
+function getRSI(data, n) {
+    var temp = [];
+    var prices = Object.entries(data).slice(0, 29);
+    var prev_price;
+    var RSI = {};
+    for ([i, [date, price]] of prices.entries()) {
+        var change;
+        if (i !== 0 && temp.length < n) {
+            change = price - prev_price;
+            temp.push(change);
+        } else if (i !== 0 && temp.length == n) {
+            change = price - prev_price;
+            temp.shift();
+            temp.push(change);
+            gains = temp.filter(g => g > 0);
+            losses = temp.filter(l => l < 0);
+            average_gain = gains.length > 0 ? sum(gains)/n : 0;
+            average_loss = losses.length > 0 ? Math.abs(sum(losses))/n : 0;
+            RS = average_gain/average_loss;
+            RSI[date] = RS === Infinity ? 100 : 100 - (100 / (1 + RS));
+        } 
+        prev_price = price;
+    }
+    return RSI;
+}
+
+module.exports = {sum, variance, simpleMovingAverage, bollingerBand, getRSI};
