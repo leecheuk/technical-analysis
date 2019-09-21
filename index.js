@@ -45,4 +45,34 @@ function simpleMovingAverage(data, days) {
     return sma;
 }
 
-module.exports = {sum, variance, simpleMovingAverage};
+/**
+ * Return the Bollinger bands from the data.
+ * 
+ * @param {Object.<string, number>} data Collection of closing price of trading days 
+ * @param {number} days Number of time periods in days
+ * @param {number} n Number of standard deviations away from average
+ * 
+ * @return {Object.<string, Array.<number, number>>} Collection of upper and lower Bollinger band of trading days
+ */
+function bollingerBand(data, days, n) {
+    // {date, upper_bollinger_band, lower_bollinger_band}
+    var temp = [];
+    var bb = {}
+    var prices = Object.entries(data)
+    for (var [i, [date, price]] of prices.entries()) {
+        temp.push(price);
+        if (i+1 == days) {
+            var average = sum(temp)/temp.length;
+            var v = variance(temp);
+            bb[date] = [average-n*Math.sqrt(v), average+n*Math.sqrt(v)];
+        } else if (i+1 > days) {
+            temp.shift();
+            var average = sum(temp)/temp.length;
+            var v = variance(temp);
+            bb[date] = [average-n*Math.sqrt(v), average+n*Math.sqrt(v)];
+        }
+    }
+    return bb;
+}
+
+module.exports = {sum, variance, simpleMovingAverage, bollingerBand};
